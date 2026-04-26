@@ -188,15 +188,3 @@ Para ejecucion conjunta `frontend + backend`, se recomienda:
 2. `apiBaseUrl` apuntando al servicio de backend dentro de la red de Docker.
 3. En Linux, si backend vive fuera de Docker y frontend dentro de Docker, usar `host.docker.internal` con `host-gateway`.
 
-## Convenciones aplicadas en Fase 0
-
-- Componentes standalone.
-- OnPush en componentes de shell/UI.
-- Estado local/global con signals.
-- Servicios con responsabilidad unica.
-- Errores HTTP centralizados y visualizables en UI.
-
-## Estado actual
-
-- Fase 0 completada y validada.
-- Proyecto listo para iniciar Fase 1: layout principal, rutas lazy y primeros CRUDs.
