@@ -1,0 +1,54 @@
+<section class="module">
+  <header class="module__header">
+    <div>
+      <h3>Movimientos</h3>
+      <p>Vista inicial para creditos/debitos con resumen calculado por signals.</p>
+    </div>
+    <button type="button">Registrar movimiento</button>
+  </header>
+
+  <div class="stats">
+    <article>
+      <h4>Total creditos</h4>
+      <p>{{ totalCredits() | number: '1.2-2' }}</p>
+    </article>
+    <article>
+      <h4>Total debitos</h4>
+      <p>{{ totalDebits() | number: '1.2-2' }}</p>
+    </article>
+  </div>
+
+  <label class="module__search">
+    <span>Busqueda rapida</span>
+    <input #searchInput type="search" placeholder="Cuenta, tipo o fecha" (input)="onSearch(searchInput.value)" />
+  </label>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Cuenta</th>
+          <th>Tipo</th>
+          <th>Valor</th>
+          <th>Saldo</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (movement of filteredMovements(); track movement.id) {
+          <tr>
+            <td>{{ movement.fecha | date: 'short' }}</td>
+            <td>{{ movement.cuenta }}</td>
+            <td>
+              <span [class]="movement.tipoMovimiento === 'CREDIT' ? 'badge badge--credit' : 'badge badge--debit'">
+                {{ movement.tipoMovimiento }}
+              </span>
+            </td>
+            <td>{{ movement.valor | number: '1.2-2' }}</td>
+            <td>{{ movement.saldo | number: '1.2-2' }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</section>

@@ -1,0 +1,43 @@
+<section class="module">
+  <header class="module__header">
+    <div>
+      <h3>Cuentas</h3>
+      <p>Modulo base para gestionar cuentas asociadas a clientes.</p>
+    </div>
+    <button type="button">Crear cuenta</button>
+  </header>
+
+  <label class="module__search">
+    <span>Busqueda rapida</span>
+    <input #searchInput type="search" placeholder="Cliente, numero o tipo de cuenta" (input)="onSearch(searchInput.value)" />
+  </label>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Cliente</th>
+          <th>Numero</th>
+          <th>Tipo</th>
+          <th>Saldo inicial</th>
+          <th>Estado</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (account of filteredAccounts(); track account.id) {
+          <tr>
+            <td>{{ account.cliente }}</td>
+            <td>{{ account.numeroCuenta }}</td>
+            <td>{{ account.tipoCuenta }}</td>
+            <td>{{ account.saldoInicial | number: '1.2-2' }}</td>
+            <td>
+              <span [class]="account.estado ? 'badge badge--active' : 'badge badge--inactive'">
+                {{ account.estado ? 'Activa' : 'Inactiva' }}
+              </span>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</section>

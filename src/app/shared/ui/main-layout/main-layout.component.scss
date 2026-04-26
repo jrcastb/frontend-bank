@@ -1,0 +1,140 @@
+.layout {
+	display: grid;
+	grid-template-columns: 280px 1fr;
+	min-height: calc(100dvh - 2rem);
+	background: #fff;
+	border: 1px solid #cbd5e1;
+	border-radius: 1rem;
+	overflow: hidden;
+}
+
+.layout__sidebar {
+	padding: 1rem;
+	background: linear-gradient(170deg, #0f172a 0%, #1e293b 100%);
+	color: #f8fafc;
+	border-right: 1px solid #1e293b;
+}
+
+.brand h1 {
+	margin: 0;
+	font-size: 1.15rem;
+	font-weight: 700;
+}
+
+.brand p {
+	margin: 0.35rem 0 0;
+	color: #cbd5e1;
+	font-size: 0.9rem;
+}
+
+.nav {
+	margin-top: 1rem;
+	display: grid;
+	gap: 0.6rem;
+}
+
+.nav__link {
+	display: block;
+	text-decoration: none;
+	color: #e2e8f0;
+	padding: 0.65rem;
+	border-radius: 0.75rem;
+	border: 1px solid transparent;
+	transition: all 180ms ease;
+}
+
+.nav__link span {
+	display: block;
+	font-weight: 600;
+}
+
+.nav__link small {
+	display: block;
+	margin-top: 0.2rem;
+	font-size: 0.76rem;
+	color: #cbd5e1;
+}
+
+.nav__link:hover {
+	background: rgb(148 163 184 / 18%);
+	border-color: rgb(203 213 225 / 30%);
+}
+
+.nav__link--active {
+	background: #0ea5e9;
+	border-color: #38bdf8;
+	color: #082f49;
+}
+
+.nav__link--active small {
+	color: #0c4a6e;
+}
+
+.layout__main {
+	display: grid;
+	grid-template-rows: auto 1fr;
+	min-width: 0;
+}
+
+.topbar {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 1rem 1.2rem;
+	border-bottom: 1px solid #e2e8f0;
+	background: #f8fafc;
+}
+
+.topbar h2 {
+	margin: 0;
+	font-size: 1.2rem;
+}
+
+.topbar p {
+	margin: 0.25rem 0 0;
+	color: #475569;
+	font-size: 0.92rem;
+}
+
+.topbar__badge {
+	padding: 0.45rem 0.7rem;
+	border-radius: 999px;
+	background: #dbeafe;
+	border: 1px solid #93c5fd;
+	color: #1d4ed8;
+	font-size: 0.78rem;
+	font-weight: 600;
+}
+
+.layout__content {
+	padding: 1rem 1.2rem;
+	background: #fff;
+	min-width: 0;
+}
+
+@media (width <= 1024px) {
+	.layout {
+		grid-template-columns: 1fr;
+	}
+
+	.layout__sidebar {
+		border-right: 0;
+		border-bottom: 1px solid #1e293b;
+	}
+
+	.nav {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+
+@media (width <= 720px) {
+	.topbar {
+		flex-direction: column;
+		align-items: start;
+		gap: 0.75rem;
+	}
+
+	.nav {
+		grid-template-columns: 1fr;
+	}
+}

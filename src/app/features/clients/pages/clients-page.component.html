@@ -1,0 +1,130 @@
+<section class="module">
+  <header class="module__header">
+    <div>
+      <h3>Clientes</h3>
+      <p>CRUD conectado al backend con filtros, formulario y acciones de edicion/eliminacion.</p>
+    </div>
+    <button type="button" (click)="openCreateForm()">Crear cliente</button>
+  </header>
+
+  <label class="module__search">
+    <span>Busqueda rapida</span>
+    <input #searchInput type="search" placeholder="Nombre, identificacion o telefono" (input)="onSearch(searchInput.value)" />
+  </label>
+
+  @if (loading()) {
+    <p class="info">Cargando clientes...</p>
+  }
+
+  @if (!loading() && filteredClients().length === 0) {
+    <p class="info">No hay clientes que coincidan con la busqueda.</p>
+  }
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Genero</th>
+          <th>Edad</th>
+          <th>Identificacion</th>
+          <th>Telefono</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (client of filteredClients(); track client.id) {
+          <tr>
+            <td>{{ client.nombre }}</td>
+            <td>{{ client.genero }}</td>
+            <td>{{ client.edad }}</td>
+            <td>{{ client.identificacion }}</td>
+            <td>{{ client.telefono }}</td>
+            <td>
+              <span [class]="client.estado ? 'badge badge--active' : 'badge badge--inactive'">
+                {{ client.estado ? 'Activo' : 'Inactivo' }}
+              </span>
+            </td>
+            <td>
+              <div class="actions">
+                <button type="button" class="button-edit" (click)="openEditForm(client)">Editar</button>
+                <button type="button" class="button-delete" [disabled]="isSavingClient(client.id)" (click)="deleteClient(client)">
+                  {{ isSavingClient(client.id) ? 'Eliminando...' : 'Eliminar' }}
+                </button>
+              </div>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  @if (isFormOpen()) {
+    <section class="form-card">
+      <header>
+        <h4>{{ editingClientId() === null ? 'Crear cliente' : 'Editar cliente' }}</h4>
+        <p>
+          {{ editingClientId() === null ? 'Ingresa los datos para crear un cliente nuevo.' : 'Actualiza los datos del cliente seleccionado.' }}
+        </p>
+      </header>
+
+      <form [formGroup]="form" (ngSubmit)="submitForm()" class="form-grid">
+        <label>
+          <span>Nombre</span>
+          <input type="text" formControlName="nombre" />
+        </label>
+
+        <label>
+          <span>Genero</span>
+          <select formControlName="genero">
+            <option value="MASCULINO">MASCULINO</option>
+            <option value="FEMENINO">FEMENINO</option>
+            <option value="OTRO">OTRO</option>
+          </select>
+        </label>
+
+        <label>
+          <span>Edad</span>
+          <input type="number" min="0" max="130" formControlName="edad" />
+        </label>
+
+        <label>
+          <span>Identificacion</span>
+          <input type="text" formControlName="identificacion" />
+        </label>
+
+        <label>
+          <span>Telefono</span>
+          <input type="text" formControlName="telefono" />
+        </label>
+
+        <label>
+          <span>Direccion</span>
+          <input type="text" formControlName="direccion" />
+        </label>
+
+        <label>
+          <span>Contrasena {{ editingClientId() === null ? '(requerida)' : '(opcional)' }}</span>
+          <input type="password" formControlName="contrasena" />
+        </label>
+
+        <label class="checkbox-label">
+          <input type="checkbox" formControlName="estado" />
+          <span>Cliente activo</span>
+        </label>
+
+        @if (formError()) {
+          <p class="error">{{ formError() }}</p>
+        }
+
+        <footer class="form-actions">
+          <button type="button" class="button-secondary" (click)="closeForm()">Cancelar</button>
+          <button type="submit" [disabled]="submitting()">
+            {{ submitting() ? 'Guardando...' : editingClientId() === null ? 'Guardar cliente' : 'Actualizar cliente' }}
+          </button>
+        </footer>
+      </form>
+    </section>
+  }
+</section>

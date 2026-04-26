@@ -1,59 +1,202 @@
-# FrontendBank
+# Frontend Bank SPA
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.8.
+SPA construida con Angular 21, TypeScript estricto y SCSS para gestionar los dominios de banca: Clientes, Cuentas, Movimientos y Reportes.
 
-## Development server
+Este repositorio ya incluye el cierre de la **Fase 0**:
 
-To start a local development server, run:
+- Baseline de arquitectura escalable (`core`, `shared`, `features`).
+- Configuracion de ambientes y `apiBaseUrl` centralizado.
+- Interceptores globales para URL base y errores HTTP.
+- Estado global de errores UI con signals.
+- Configuracion de calidad con ESLint y Stylelint.
+- Migracion de pruebas unitarias de Vitest a Jest.
 
-```bash
-ng serve
+## Stack tecnico
+
+- Angular 21 (standalone + control flow moderno)
+- TypeScript (strict mode)
+- SCSS
+- Jest + jest-preset-angular
+- ESLint (angular-eslint + typescript-eslint)
+- Stylelint
+
+## Estructura base
+
+```text
+src/app/
+  core/
+    api/
+    config/
+    errors/
+    guards/
+    interceptors/
+  shared/
+    directives/
+    models/
+    pipes/
+    ui/
+    utils/
+  features/
+    clients/
+    accounts/
+    movements/
+    reports/
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## Requisitos
 
-## Code scaffolding
+- Node.js 22+
+- npm 11+
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## Instalacion
 
 ```bash
-ng generate --help
+npm install
 ```
 
-## Building
+## Ejecucion local
 
-To build the project run:
+### Frontend (modo desarrollo)
 
 ```bash
-ng build
+npm run start
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+### Frontend + proxy para backend local
 
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+Usa este comando cuando tu backend corre en `http://localhost:8080`:
 
 ```bash
-ng test
+npm run start:proxy
 ```
 
-## Running end-to-end tests
+El proxy esta definido en `proxy.conf.json` y enruta `'/api'` al backend.
 
-For end-to-end (e2e) testing, run:
+## Scripts de calidad
+
+### Type checking
 
 ```bash
-ng e2e
+npm run typecheck
+npm run typecheck:spec
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+### Lint TypeScript + Angular templates
 
-## Additional Resources
+```bash
+npm run lint
+npm run lint:fix
+```
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+### Lint SCSS
+
+```bash
+npm run lint:styles
+npm run lint:styles:fix
+```
+
+## Pruebas unitarias (Jest)
+
+```bash
+npm test
+npm run test:watch
+npm run test:coverage
+```
+
+Configuracion principal:
+
+- `jest.config.js`
+- `setup-jest.ts`
+- `tsconfig.spec.json`
+
+## Configuracion de entornos
+
+- `src/environments/environment.ts`
+- `src/environments/environment.development.ts`
+- `src/environments/environment.production.ts`
+
+Propiedad central de integracion:
+
+- `apiBaseUrl`
+
+Los interceptores construyen automaticamente URLs absolutas para requests relativos.
+
+## Integracion con backend y Docker
+
+### Desarrollo local
+
+- Backend sugerido: `http://localhost:8080`
+- Frontend via proxy: `http://localhost:4200`
+
+### Contrato backend aplicado en frontend
+
+- Seguridad: Basic Auth requerido para `/clientes`, `/cuentas`, `/movimientos`, `/reportes`.
+- Credenciales locales por defecto esperadas:
+  - user: `admin`
+  - password: `admin123`
+- Header `Authorization` se inyecta automaticamente desde el interceptor `auth-default-headers.interceptor.ts`.
+- Headers por defecto JSON:
+  - `Accept: application/json`
+  - `Content-Type: application/json` (cuando aplica por tipo de body)
+
+### Endpoints publicos sin auth
+
+- `GET /actuator/health`
+- `GET /v3/api-docs`
+- `GET /swagger-ui.html`
+- `GET /swagger-ui/**`
+
+### Errores backend unificados
+
+El interceptor de errores soporta payload con:
+
+- `status`
+- `code`
+- `title`
+- `message`
+- `detail`
+- `traceId`
+
+Estos campos se normalizan en el servicio de errores UI para poder mostrarlos y trazarlos.
+
+### PDF de reportes
+
+Para `GET /reportes` con `formato=pdf`:
+
+- Enviar header `Accept: application/pdf` por request especifica.
+- Solicitar `responseType: 'blob'`.
+- Usar utilitario `src/app/shared/utils/pdf-download.util.ts` para descargar usando nombre desde `Content-Disposition`.
+
+### Enums a respetar en frontend
+
+- Genero: `MASCULINO | FEMENINO | OTRO`
+- Tipo cuenta: `AHORROS | CORRIENTE`
+- Tipo movimiento: `CREDIT | DEBIT`
+
+### Reglas de negocio criticas a reflejar en UI
+
+- Limite diario de debito por cuenta: `1000`.
+- Debito no puede superar saldo disponible.
+- Cuenta inactiva no permite movimientos.
+- En reportes: `fechaDesde <= fechaHasta`.
+
+### Escenario docker-compose (siguiente fase)
+
+Para ejecucion conjunta `frontend + backend`, se recomienda:
+
+1. Frontend servido con Nginx (build de Angular en multi-stage).
+2. `apiBaseUrl` apuntando al servicio de backend dentro de la red de Docker.
+3. En Linux, si backend vive fuera de Docker y frontend dentro de Docker, usar `host.docker.internal` con `host-gateway`.
+
+## Convenciones aplicadas en Fase 0
+
+- Componentes standalone.
+- OnPush en componentes de shell/UI.
+- Estado local/global con signals.
+- Servicios con responsabilidad unica.
+- Errores HTTP centralizados y visualizables en UI.
+
+## Estado actual
+
+- Fase 0 completada y validada.
+- Proyecto listo para iniciar Fase 1: layout principal, rutas lazy y primeros CRUDs.

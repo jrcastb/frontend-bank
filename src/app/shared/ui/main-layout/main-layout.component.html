@@ -1,0 +1,36 @@
+<div class="layout">
+  <aside class="layout__sidebar">
+    <div class="brand">
+      <h1>Frontend Bank</h1>
+      <p>SPA de evaluacion tecnica</p>
+    </div>
+
+    <nav class="nav" aria-label="Navegacion principal">
+      @for (item of navItems; track item.route) {
+        <a
+          [routerLink]="item.route"
+          routerLinkActive="nav__link--active"
+          class="nav__link"
+          [routerLinkActiveOptions]="{ exact: true }"
+        >
+          <span>{{ item.label }}</span>
+          <small>{{ item.description }}</small>
+        </a>
+      }
+    </nav>
+  </aside>
+
+  <section class="layout__main">
+    <header class="topbar">
+      <div>
+        <h2>{{ pageTitle() }}</h2>
+        <p>{{ pageDescription() }}</p>
+      </div>
+      <span class="topbar__badge">Angular 21 + Signals + OnPush</span>
+    </header>
+
+    <section class="layout__content">
+      <router-outlet />
+    </section>
+  </section>
+</div>

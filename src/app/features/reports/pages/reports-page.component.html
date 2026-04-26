@@ -1,0 +1,83 @@
+<section class="module">
+  <header class="module__header">
+    <div>
+      <h3>Reportes</h3>
+      <p>Consulta de estado de cuenta por cliente y rango de fechas con salida JSON o PDF.</p>
+    </div>
+  </header>
+
+  <section class="filters">
+    <label>
+      <span>Cliente ID</span>
+      <input #clienteIdInput type="number" min="1" [value]="form().clienteId" (input)="updateClienteId(clienteIdInput.value)" />
+    </label>
+
+    <label>
+      <span>Fecha desde</span>
+      <input #fechaDesdeInput type="date" [value]="form().fechaDesde" (input)="updateFechaDesde(fechaDesdeInput.value)" />
+    </label>
+
+    <label>
+      <span>Fecha hasta</span>
+      <input #fechaHastaInput type="date" [value]="form().fechaHasta" (input)="updateFechaHasta(fechaHastaInput.value)" />
+    </label>
+  </section>
+
+  @if (!isDateRangeValid()) {
+    <p class="error">El rango de fechas es invalido: fechaDesde debe ser menor o igual a fechaHasta.</p>
+  }
+
+  @if (formError()) {
+    <p class="error">{{ formError() }}</p>
+  }
+
+  <div class="actions">
+    <button type="button" [disabled]="loadingJson()" (click)="generateJsonReport()">
+      {{ loadingJson() ? 'Consultando...' : 'Consultar JSON' }}
+    </button>
+
+    <button type="button" class="button-secondary" [disabled]="loadingPdf()" (click)="downloadPdfReport()">
+      {{ loadingPdf() ? 'Descargando...' : 'Descargar PDF' }}
+    </button>
+  </div>
+
+  @if (hasResult()) {
+    <section class="summary">
+      <article>
+        <h4>Total creditos</h4>
+        <p>{{ reportResult()?.resumen?.totalCreditos ?? 0 | number: '1.2-2' }}</p>
+      </article>
+      <article>
+        <h4>Total debitos</h4>
+        <p>{{ reportResult()?.resumen?.totalDebitos ?? 0 | number: '1.2-2' }}</p>
+      </article>
+    </section>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Cliente</th>
+            <th>Cuenta</th>
+            <th>Tipo</th>
+            <th>Movimiento</th>
+            <th>Saldo disponible</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of reportResult()?.items ?? []; track $index) {
+            <tr>
+              <td>{{ item.fecha | date: 'short' }}</td>
+              <td>{{ item.cliente }}</td>
+              <td>{{ item.numeroCuenta }}</td>
+              <td>{{ item.tipo }}</td>
+              <td>{{ item.movimiento | number: '1.2-2' }}</td>
+              <td>{{ item.saldoDisponible | number: '1.2-2' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

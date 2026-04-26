@@ -1,0 +1,8 @@
+{
+  "extends": ["stylelint-config-standard-scss"],
+  "ignoreFiles": ["dist/**/*", "coverage/**/*", ".angular/**/*"],
+  "rules": {
+    "no-empty-source": null,
+    "selector-class-pattern": null
+  }
+}
