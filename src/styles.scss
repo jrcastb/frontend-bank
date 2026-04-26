@@ -1,9 +1,14 @@
 :root {
-	--color-bg: #f8fafc;
-	--color-surface: #fff;
-	--color-text: #0f172a;
-	--color-text-muted: #475569;
-	--color-border: #cbd5e1;
+	--bp-yellow: #ffdc00;
+	--bp-yellow-soft: #fff6b8;
+	--bp-blue: #002850;
+	--bp-blue-soft: #dbe8f6;
+	--bp-bg: #f6f8fb;
+	--bp-surface: #fff;
+	--bp-text: #1a2a3a;
+	--bp-text-muted: #5f6b78;
+	--bp-border: #d6dde7;
+	--bp-danger: #b42318;
 }
 
 * {
@@ -18,7 +23,7 @@ body {
 }
 
 body {
-	background: radial-gradient(circle at top right, #e0f2fe 0%, var(--color-bg) 45%);
-	color: var(--color-text);
-	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+	background: radial-gradient(circle at 95% 0%, #e8f0fa 0%, var(--bp-bg) 42%);
+	color: var(--bp-text);
+	font-family: Gilroy-Regular, 'Source Sans 3', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }

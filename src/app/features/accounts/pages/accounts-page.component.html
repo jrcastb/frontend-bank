@@ -1,32 +1,37 @@
 <section class="module">
   <header class="module__header">
-    <div>
-      <h3>Cuentas</h3>
-      <p>Modulo base para gestionar cuentas asociadas a clientes.</p>
-    </div>
-    <button type="button">Crear cuenta</button>
+    <button type="button" (click)="openCreateForm()">Crear cuenta</button>
   </header>
 
   <label class="module__search">
     <span>Busqueda rapida</span>
-    <input #searchInput type="search" placeholder="Cliente, numero o tipo de cuenta" (input)="onSearch(searchInput.value)" />
+    <input #searchInput type="search" placeholder="ClienteId, numero o tipo de cuenta" (input)="onSearch(searchInput.value)" />
   </label>
+
+  @if (loading()) {
+    <p class="info">Cargando cuentas...</p>
+  }
+
+  @if (!loading() && filteredAccounts().length === 0) {
+    <p class="info">No hay cuentas que coincidan con la busqueda.</p>
+  }
 
   <div class="table-wrap">
     <table>
       <thead>
         <tr>
-          <th>Cliente</th>
+          <th>ClienteId</th>
           <th>Numero</th>
           <th>Tipo</th>
           <th>Saldo inicial</th>
           <th>Estado</th>
+          <th>Acciones</th>
         </tr>
       </thead>
       <tbody>
         @for (account of filteredAccounts(); track account.id) {
           <tr>
-            <td>{{ account.cliente }}</td>
+            <td>{{ account.clienteId }}</td>
             <td>{{ account.numeroCuenta }}</td>
             <td>{{ account.tipoCuenta }}</td>
             <td>{{ account.saldoInicial | number: '1.2-2' }}</td>
@@ -35,9 +40,85 @@
                 {{ account.estado ? 'Activa' : 'Inactiva' }}
               </span>
             </td>
+            <td>
+              <div class="actions">
+                <button type="button" class="button-edit" (click)="openEditForm(account)">Editar</button>
+                <button type="button" class="button-delete" [disabled]="isDeleting(account.id)" (click)="requestDeleteAccount(account)">
+                  {{ isDeleting(account.id) ? 'Eliminando...' : 'Eliminar' }}
+                </button>
+              </div>
+            </td>
           </tr>
         }
       </tbody>
     </table>
   </div>
+
+  @if (isFormOpen()) {
+    <section class="form-card">
+      <form [formGroup]="form" (ngSubmit)="submitForm()" class="form-grid">
+        <label>
+          <span>ClienteId</span>
+          <input type="number" min="1" max="999999999" step="1" formControlName="clienteId"
+            [class.is-invalid]="form.controls.clienteId.invalid && form.controls.clienteId.touched" />
+          @if (form.controls.clienteId.invalid && form.controls.clienteId.touched) {
+            <span class="field-error">Debe ser un numero entero positivo.</span>
+          }
+        </label>
+
+        <label>
+          <span>Numero de cuenta</span>
+          <input type="text" formControlName="numeroCuenta" minlength="6" maxlength="20" autocomplete="off"
+            [class.is-invalid]="form.controls.numeroCuenta.invalid && form.controls.numeroCuenta.touched" />
+          @if (form.controls.numeroCuenta.invalid && form.controls.numeroCuenta.touched) {
+            <span class="field-error">Entre 6 y 20 digitos numericos.</span>
+          }
+        </label>
+
+        <label>
+          <span>Tipo de cuenta</span>
+          <select formControlName="tipoCuenta">
+            <option value="AHORROS">AHORROS</option>
+            <option value="CORRIENTE">CORRIENTE</option>
+          </select>
+        </label>
+
+        <label>
+          <span>Saldo inicial</span>
+          <input type="number" min="0" max="999999999.99" step="0.01" formControlName="saldoInicial"
+            [class.is-invalid]="form.controls.saldoInicial.invalid && form.controls.saldoInicial.touched" />
+          @if (form.controls.saldoInicial.invalid && form.controls.saldoInicial.touched) {
+            <span class="field-error">Valor mayor o igual a 0, con hasta 2 decimales.</span>
+          }
+        </label>
+
+        <label class="checkbox-label">
+          <input type="checkbox" formControlName="estado" />
+          <span>Cuenta activa</span>
+          <small>Si desactivas este campo, la cuenta quedara marcada como inactiva.</small>
+        </label>
+
+        @if (formError()) {
+          <p class="error">{{ formError() }}</p>
+        }
+
+        <footer class="form-actions">
+          <button type="button" class="button-secondary" (click)="closeForm()">Cancelar</button>
+          <button type="submit" [disabled]="submitting()">
+            {{ submitting() ? 'Guardando...' : editingAccountId() === null ? 'Guardar cuenta' : 'Actualizar cuenta' }}
+          </button>
+        </footer>
+      </form>
+    </section>
+  }
+
+  <app-confirm-dialog
+    [open]="pendingDeletionAccount() !== null"
+    title="Eliminar cuenta"
+    [message]="deleteDialogMessage()"
+    [confirmLabel]="deletingPendingAccount() ? 'Eliminando...' : 'Eliminar cuenta'"
+    [busy]="deletingPendingAccount()"
+    (cancel)="closeDeleteAccountDialog()"
+    (confirm)="confirmDeleteAccount()"
+  />
 </section>

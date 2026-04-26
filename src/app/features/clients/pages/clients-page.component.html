@@ -1,9 +1,5 @@
 <section class="module">
   <header class="module__header">
-    <div>
-      <h3>Clientes</h3>
-      <p>CRUD conectado al backend con filtros, formulario y acciones de edicion/eliminacion.</p>
-    </div>
     <button type="button" (click)="openCreateForm()">Crear cliente</button>
   </header>
 
@@ -49,7 +45,7 @@
             <td>
               <div class="actions">
                 <button type="button" class="button-edit" (click)="openEditForm(client)">Editar</button>
-                <button type="button" class="button-delete" [disabled]="isSavingClient(client.id)" (click)="deleteClient(client)">
+                <button type="button" class="button-delete" [disabled]="isSavingClient(client.id)" (click)="requestDeleteClient(client)">
                   {{ isSavingClient(client.id) ? 'Eliminando...' : 'Eliminar' }}
                 </button>
               </div>
@@ -62,17 +58,14 @@
 
   @if (isFormOpen()) {
     <section class="form-card">
-      <header>
-        <h4>{{ editingClientId() === null ? 'Crear cliente' : 'Editar cliente' }}</h4>
-        <p>
-          {{ editingClientId() === null ? 'Ingresa los datos para crear un cliente nuevo.' : 'Actualiza los datos del cliente seleccionado.' }}
-        </p>
-      </header>
-
       <form [formGroup]="form" (ngSubmit)="submitForm()" class="form-grid">
         <label>
           <span>Nombre</span>
-          <input type="text" formControlName="nombre" />
+          <input type="text" formControlName="nombre" minlength="2" maxlength="120" autocomplete="off"
+            [class.is-invalid]="form.controls.nombre.invalid && form.controls.nombre.touched" />
+          @if (form.controls.nombre.invalid && form.controls.nombre.touched) {
+            <span class="field-error">Solo letras, entre 2 y 120 caracteres.</span>
+          }
         </label>
 
         <label>
@@ -86,32 +79,53 @@
 
         <label>
           <span>Edad</span>
-          <input type="number" min="0" max="130" formControlName="edad" />
+          <input type="number" min="0" max="130" step="1" formControlName="edad"
+            [class.is-invalid]="form.controls.edad.invalid && form.controls.edad.touched" />
+          @if (form.controls.edad.invalid && form.controls.edad.touched) {
+            <span class="field-error">Ingresa una edad valida entre 0 y 130.</span>
+          }
         </label>
 
         <label>
           <span>Identificacion</span>
-          <input type="text" formControlName="identificacion" />
+          <input type="text" formControlName="identificacion" minlength="6" maxlength="20" autocomplete="off"
+            [class.is-invalid]="form.controls.identificacion.invalid && form.controls.identificacion.touched" />
+          @if (form.controls.identificacion.invalid && form.controls.identificacion.touched) {
+            <span class="field-error">Entre 6 y 20 caracteres alfanumericos, sin espacios.</span>
+          }
         </label>
 
         <label>
           <span>Telefono</span>
-          <input type="text" formControlName="telefono" />
+          <input type="text" formControlName="telefono" minlength="7" maxlength="20" autocomplete="off"
+            [class.is-invalid]="form.controls.telefono.invalid && form.controls.telefono.touched" />
+          @if (form.controls.telefono.invalid && form.controls.telefono.touched) {
+            <span class="field-error">Entre 7 y 20 caracteres, solo numeros y simbolos validos.</span>
+          }
         </label>
 
         <label>
           <span>Direccion</span>
-          <input type="text" formControlName="direccion" />
+          <input type="text" formControlName="direccion" minlength="5" maxlength="180" autocomplete="off"
+            [class.is-invalid]="form.controls.direccion.invalid && form.controls.direccion.touched" />
+          @if (form.controls.direccion.invalid && form.controls.direccion.touched) {
+            <span class="field-error">Minimo 5 caracteres, no puede estar vacia.</span>
+          }
         </label>
 
         <label>
           <span>Contrasena {{ editingClientId() === null ? '(requerida)' : '(opcional)' }}</span>
-          <input type="password" formControlName="contrasena" />
+          <input type="password" formControlName="contrasena" minlength="8" maxlength="255" autocomplete="new-password"
+            [class.is-invalid]="form.controls.contrasena.invalid && form.controls.contrasena.touched" />
+          @if (form.controls.contrasena.invalid && form.controls.contrasena.touched) {
+            <span class="field-error">Minimo 8 caracteres con al menos una letra y un numero.</span>
+          }
         </label>
 
         <label class="checkbox-label">
           <input type="checkbox" formControlName="estado" />
           <span>Cliente activo</span>
+          <small>Si desactivas este campo, el cliente quedara marcado como inactivo.</small>
         </label>
 
         @if (formError()) {
@@ -127,4 +141,14 @@
       </form>
     </section>
   }
+
+  <app-confirm-dialog
+    [open]="pendingDeletionClient() !== null"
+    title="Eliminar cliente"
+    [message]="deleteDialogMessage()"
+    [confirmLabel]="deletingPendingClient() ? 'Eliminando...' : 'Eliminar cliente'"
+    [busy]="deletingPendingClient()"
+    (cancel)="closeDeleteClientDialog()"
+    (confirm)="confirmDeleteClient()"
+  />
 </section>

@@ -10,7 +10,7 @@
 
 .module__header p {
 	margin: 0.3rem 0 0;
-	color: #475569;
+	color: var(--bp-text-muted);
 }
 
 .filters {
@@ -22,14 +22,14 @@
 .filters label span {
 	display: block;
 	font-size: 0.9rem;
-	color: #475569;
+	color: var(--bp-text-muted);
 	margin-bottom: 0.25rem;
 }
 
 .filters input {
 	width: 100%;
 	padding: 0.6rem 0.7rem;
-	border: 1px solid #cbd5e1;
+	border: 1px solid var(--bp-border);
 	border-radius: 0.6rem;
 }
 
@@ -40,12 +40,19 @@
 }
 
 .actions button {
-	border: 1px solid #0f766e;
-	background: #0f766e;
-	color: #f0fdfa;
+	border: 1px solid var(--bp-yellow);
+	background: var(--bp-yellow);
+	color: var(--bp-blue);
 	border-radius: 0.6rem;
 	padding: 0.55rem 0.85rem;
-	font-weight: 600;
+	font-weight: 700;
+	transition: all 180ms ease;
+}
+
+.actions button:hover {
+	background: var(--bp-blue);
+	color: var(--bp-yellow);
+	border-color: var(--bp-blue);
 }
 
 .actions button:disabled {
@@ -54,8 +61,9 @@
 }
 
 .actions .button-secondary {
-	border-color: #1d4ed8;
-	background: #1d4ed8;
+	border-color: var(--bp-blue);
+	background: #fff;
+	color: var(--bp-blue);
 }
 
 .error {
@@ -74,16 +82,16 @@
 }
 
 .summary article {
-	border: 1px solid #cbd5e1;
+	border: 1px solid var(--bp-border);
 	border-radius: 0.75rem;
 	padding: 0.75rem;
-	background: #f8fafc;
+	background: #fbfdff;
 }
 
 .summary h4 {
 	margin: 0;
 	font-size: 0.9rem;
-	color: #475569;
+	color: var(--bp-text-muted);
 }
 
 .summary p {
@@ -104,14 +112,15 @@ table {
 th,
 td {
 	padding: 0.65rem;
-	border-bottom: 1px solid #e2e8f0;
+	border-bottom: 1px solid var(--bp-border);
 	text-align: left;
 	font-size: 0.93rem;
 }
 
 th {
-	background: #f8fafc;
+	background: #eff4fa;
 	font-weight: 700;
+	color: var(--bp-blue);
 }
 
 @media (width <= 860px) {

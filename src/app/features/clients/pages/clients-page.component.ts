@@ -1,14 +1,30 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, signal } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { finalize } from 'rxjs';
+import { ConfirmDialogComponent } from '../../../shared/ui/confirm-dialog/confirm-dialog.component';
 import { ClientsApiService } from '../services/clients-api.service';
 import type { ClientPatchRequest, ClientResponse, ClientUpsertRequest } from '../models/clients.models';
 
+const NAME_PATTERN = /^[\p{L}\s'.-]{2,120}$/u;
+const IDENTIFICATION_PATTERN = /^[A-Za-z0-9-]{6,20}$/;
+const PHONE_PATTERN = /^[0-9+()\-\s]{7,20}$/;
+const PASSWORD_PATTERN = /^(?=.*[A-Za-z])(?=.*\d).{8,255}$/;
+
+function nonWhitespaceValidator(control: AbstractControl): ValidationErrors | null {
+  const value = control.value;
+
+  if (typeof value !== 'string') {
+    return null;
+  }
+
+  return value.trim().length === 0 ? { whitespace: true } : null;
+}
+
 @Component({
   selector: 'app-clients-page',
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, ConfirmDialogComponent],
   templateUrl: './clients-page.component.html',
   styleUrl: './clients-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -22,22 +38,40 @@ export class ClientsPageComponent {
   protected readonly loading = signal(false);
   protected readonly submitting = signal(false);
   protected readonly removingClientId = signal<number | null>(null);
+  protected readonly pendingDeletionClient = signal<ClientResponse | null>(null);
   protected readonly isFormOpen = signal(false);
   protected readonly editingClientId = signal<number | null>(null);
   protected readonly formError = signal('');
 
   protected readonly clients = signal<ClientResponse[]>([]);
+  protected readonly deleteDialogMessage = computed(() => {
+    const client = this.pendingDeletionClient();
+    return client ? `Esta accion eliminara al cliente ${client.nombre}.` : '';
+  });
+  protected readonly deletingPendingClient = computed(() => {
+    const client = this.pendingDeletionClient();
+    return client !== null && this.removingClientId() === client.id;
+  });
 
   protected readonly form = this.formBuilder.nonNullable.group({
-    nombre: ['', [Validators.required, Validators.maxLength(120)]],
+    nombre: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(120), Validators.pattern(NAME_PATTERN)]],
     genero: this.formBuilder.nonNullable.control<'MASCULINO' | 'FEMENINO' | 'OTRO'>('MASCULINO', {
       validators: [Validators.required]
     }),
-    edad: ['18', [Validators.required, Validators.min(0), Validators.max(130)]],
-    identificacion: ['', [Validators.required, Validators.maxLength(50)]],
-    direccion: ['', [Validators.required, Validators.maxLength(180)]],
-    telefono: ['', [Validators.required, Validators.maxLength(30)]],
-    contrasena: ['', [Validators.minLength(8), Validators.maxLength(255)]],
+    edad: ['18', [Validators.required, Validators.pattern(/^\d{1,3}$/), Validators.min(0), Validators.max(130)]],
+    identificacion: [
+      '',
+      [
+        Validators.required,
+        Validators.minLength(6),
+        Validators.maxLength(20),
+        Validators.pattern(IDENTIFICATION_PATTERN),
+        nonWhitespaceValidator
+      ]
+    ],
+    direccion: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(180), nonWhitespaceValidator]],
+    telefono: ['', [Validators.required, Validators.pattern(PHONE_PATTERN)]],
+    contrasena: ['', [Validators.minLength(8), Validators.maxLength(255), Validators.pattern(PASSWORD_PATTERN)]],
     estado: [true]
   });
 
@@ -78,7 +112,12 @@ export class ClientsPageComponent {
       contrasena: '',
       estado: true
     });
-    this.form.controls.contrasena.setValidators([Validators.required, Validators.minLength(8), Validators.maxLength(255)]);
+    this.form.controls.contrasena.setValidators([
+      Validators.required,
+      Validators.minLength(8),
+      Validators.maxLength(255),
+      Validators.pattern(PASSWORD_PATTERN)
+    ]);
     this.form.controls.contrasena.updateValueAndValidity();
     this.isFormOpen.set(true);
   }
@@ -96,7 +135,11 @@ export class ClientsPageComponent {
       contrasena: '',
       estado: client.estado
     });
-    this.form.controls.contrasena.setValidators([Validators.minLength(8), Validators.maxLength(255)]);
+    this.form.controls.contrasena.setValidators([
+      Validators.minLength(8),
+      Validators.maxLength(255),
+      Validators.pattern(PASSWORD_PATTERN)
+    ]);
     this.form.controls.contrasena.updateValueAndValidity();
     this.isFormOpen.set(true);
   }
@@ -110,6 +153,7 @@ export class ClientsPageComponent {
   protected submitForm(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
+      this.formError.set(this.getFormValidationMessage());
       return;
     }
 
@@ -197,10 +241,26 @@ export class ClientsPageComponent {
       });
   }
 
-  protected deleteClient(client: ClientResponse): void {
-    const shouldDelete = window.confirm(`Eliminar cliente ${client.nombre}?`);
+  private getFormValidationMessage(): string {
+    return 'Revisa los campos marcados en rojo antes de continuar.';
+  }
 
-    if (!shouldDelete) {
+  protected requestDeleteClient(client: ClientResponse): void {
+    this.pendingDeletionClient.set(client);
+  }
+
+  protected closeDeleteClientDialog(): void {
+    if (this.deletingPendingClient()) {
+      return;
+    }
+
+    this.pendingDeletionClient.set(null);
+  }
+
+  protected confirmDeleteClient(): void {
+    const client = this.pendingDeletionClient();
+
+    if (!client) {
       return;
     }
 
@@ -212,7 +272,10 @@ export class ClientsPageComponent {
         finalize(() => this.removingClientId.set(null)),
         takeUntilDestroyed(this.destroyRef)
       )
-      .subscribe(() => this.loadClients());
+      .subscribe(() => {
+        this.pendingDeletionClient.set(null);
+        this.loadClients();
+      });
   }
 
   protected isSavingClient(clientId: number): boolean {

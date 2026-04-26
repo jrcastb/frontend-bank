@@ -57,7 +57,7 @@ export const httpErrorInterceptor: HttpInterceptorFn = (request, next) => {
         const payload = toBackendPayload(error.error);
         const status = payload?.status ?? error.status;
         const title = payload?.title || DEFAULT_TITLE;
-        const message = payload?.message || error.message || getStatusFallbackMessage(status);
+        const message = payload?.message || getStatusFallbackMessage(status);
 
         errorService.setError({
           title,

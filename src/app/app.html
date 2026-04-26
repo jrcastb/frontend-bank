@@ -1,8 +1,7 @@
 <main class="app-root">
   @if (currentError(); as currentErrorState) {
     <section class="alert" role="alert" aria-live="assertive">
-      <div>
-        <strong>{{ currentErrorState.title }}</strong>
+      <div class="alert__content">
         <p>{{ currentErrorState.message }}</p>
       </div>
       <button type="button" (click)="dismissError()" aria-label="Descartar mensaje de error">

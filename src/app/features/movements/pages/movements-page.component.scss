@@ -5,8 +5,8 @@
 
 .module__header {
 	display: flex;
-	justify-content: space-between;
-	align-items: start;
+	justify-content: flex-end;
+	align-items: center;
 	gap: 1rem;
 }
 
@@ -17,16 +17,24 @@
 
 .module__header p {
 	margin: 0.3rem 0 0;
-	color: #475569;
+	color: var(--bp-text-muted);
 }
 
 .module__header button {
-	border: 1px solid #d97706;
-	background: #d97706;
-	color: #fff;
+	border: 1px solid var(--bp-yellow);
+	background: var(--bp-yellow);
+	color: var(--bp-blue);
 	border-radius: 0.6rem;
 	padding: 0.55rem 0.8rem;
-	font-weight: 600;
+	font-weight: 700;
+	transition: all 180ms ease;
+}
+
+.module__header button:hover,
+.form-actions button:hover {
+	background: var(--bp-blue);
+	color: var(--bp-yellow);
+	border-color: var(--bp-blue);
 }
 
 .stats {
@@ -36,16 +44,16 @@
 }
 
 .stats article {
-	border: 1px solid #cbd5e1;
+	border: 1px solid var(--bp-border);
 	border-radius: 0.75rem;
 	padding: 0.75rem;
-	background: #f8fafc;
+	background: #fbfdff;
 }
 
 .stats h4 {
 	margin: 0;
 	font-size: 0.9rem;
-	color: #475569;
+	color: var(--bp-text-muted);
 }
 
 .stats p {
@@ -57,16 +65,25 @@
 .module__search span {
 	display: block;
 	font-size: 0.9rem;
-	color: #475569;
+	color: var(--bp-text-muted);
 	margin-bottom: 0.25rem;
 }
 
 .module__search input {
 	width: 100%;
-	max-width: 380px;
+	max-width: 420px;
 	padding: 0.6rem 0.7rem;
-	border: 1px solid #cbd5e1;
+	border: 1px solid var(--bp-border);
 	border-radius: 0.6rem;
+}
+
+.info {
+	margin: 0;
+	padding: 0.65rem 0.75rem;
+	border-radius: 0.55rem;
+	background: var(--bp-blue-soft);
+	border: 1px solid #bdd0e6;
+	color: var(--bp-blue);
 }
 
 .table-wrap {
@@ -81,14 +98,16 @@ table {
 th,
 td {
 	padding: 0.65rem;
-	border-bottom: 1px solid #e2e8f0;
+	border-bottom: 1px solid var(--bp-border);
 	text-align: left;
 	font-size: 0.93rem;
+	vertical-align: middle;
 }
 
 th {
-	background: #f8fafc;
+	background: #eff4fa;
 	font-weight: 700;
+	color: var(--bp-blue);
 }
 
 .badge {
@@ -109,11 +128,154 @@ th {
 	color: #991b1b;
 }
 
-@media (width <= 720px) {
-	.module__header {
-		flex-direction: column;
+.button-delete {
+	border: 1px solid #ef4444;
+	background: #fff5f5;
+	color: #b91c1c;
+	border-radius: 0.5rem;
+	padding: 0.35rem 0.6rem;
+	font-size: 0.82rem;
+	font-weight: 600;
+}
+
+.button-delete:hover {
+	background: var(--bp-yellow-soft);
+}
+
+.button-delete:disabled,
+.form-actions button:disabled {
+	opacity: 0.65;
+	cursor: wait;
+}
+
+.form-card {
+	border: 1px solid var(--bp-border);
+	border-radius: 0.8rem;
+	padding: 1rem;
+	background: #fbfdff;
+	width: min(60%, 860px);
+	margin-inline: auto;
+}
+
+.form-grid {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 0.75rem;
+	margin-top: 0;
+	max-width: 620px;
+	margin-inline: auto;
+}
+
+.form-grid label {
+	display: grid;
+	gap: 0.3rem;
+}
+
+.form-grid label span {
+	font-size: 0.86rem;
+	color: var(--bp-blue);
+}
+
+.form-grid input,
+.form-grid select {
+	border: 1px solid var(--bp-border);
+	border-radius: 0.5rem;
+	padding: 0.5rem 0.6rem;
+	background: #fff;
+	transition: border-color 120ms ease;
+}
+
+.form-grid input.is-invalid,
+.form-grid select.is-invalid {
+	border-color: #f87171;
+	background: #fff5f5;
+}
+
+.field-error {
+	font-size: 0.78rem;
+	color: #dc2626;
+	margin: 0;
+	line-height: 1.3;
+}
+
+.error {
+	grid-column: 1 / -1;
+	margin: 0;
+	padding: 0.65rem 0.75rem;
+	border-radius: 0.55rem;
+	background: #fee2e2;
+	border: 1px solid #fecaca;
+	color: #991b1b;
+}
+
+.form-actions {
+	grid-column: 1 / -1;
+	display: flex;
+	justify-content: end;
+	gap: 0.55rem;
+}
+
+.form-actions .button-secondary {
+	border: 1px solid var(--bp-blue);
+	background: #fff;
+	color: var(--bp-blue);
+	border-radius: 0.6rem;
+	padding: 0.55rem 0.8rem;
+	font-weight: 600;
+}
+
+.form-actions button {
+	border: 1px solid var(--bp-yellow);
+	background: var(--bp-yellow);
+	color: var(--bp-blue);
+	border-radius: 0.6rem;
+	padding: 0.55rem 0.8rem;
+	font-weight: 700;
+}
+
+@media (width <= 1280px) {
+	.form-card {
+		width: min(68%, 860px);
 	}
 
+	.form-grid {
+		max-width: 640px;
+	}
+}
+
+@media (width <= 1024px) {
+	.form-card {
+		width: min(76%, 840px);
+	}
+
+	.form-grid {
+		max-width: 620px;
+	}
+}
+
+@media (width <= 860px) {
+	.form-card {
+		width: min(88%, 760px);
+		padding: 0.9rem;
+	}
+
+	.form-grid {
+		max-width: 560px;
+	}
+}
+
+@media (width <= 640px) {
+	.form-card {
+		width: 100%;
+		padding: 0.85rem;
+	}
+
+	.form-grid {
+		max-width: 100%;
+	}
+}
+
+@media (width <= 720px) {
 	.stats {
 		grid-template-columns: 1fr;
 	}

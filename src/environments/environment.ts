@@ -4,7 +4,7 @@ export type { Environment };
 
 export const environment: Environment = {
   production: false,
-  apiBaseUrl: 'http://localhost:8080/api',
+  apiBaseUrl: 'http://localhost:8080',
   auth: {
     basicUser: 'admin',
     basicPassword: 'admin123'
