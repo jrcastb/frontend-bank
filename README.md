@@ -123,6 +123,58 @@ Los interceptores construyen automaticamente URLs absolutas para requests relati
 
 ## Integracion con backend y Docker
 
+### Desde donde ejecutar docker compose
+
+Ejecuta los comandos desde esta carpeta del frontend:
+
+```bash
+cd frontend-bank
+docker compose up --build -d
+```
+
+El archivo usado es `docker-compose.yml` de este repositorio.
+
+### Levantar stack completo con Docker (frontend + backend + mysql)
+
+Construye y levanta todo en un solo comando:
+
+```bash
+docker compose up --build -d
+```
+
+Archivo de variables recomendado:
+
+- Copia `.env.example` a `.env` y ajusta solo si lo necesitas.
+- Este repositorio ya ignora `.env` en git.
+
+URLs resultantes:
+
+- Frontend: `http://localhost:4200`
+- Backend: `http://localhost:8080`
+
+El frontend se sirve con Nginx y hace proxy de `'/api/*'` al backend dentro de la red Docker.
+
+Valores por defecto de integracion:
+
+- `BACKEND_URL=http://backend-bank:8080`
+- `MYSQL_DATABASE=backend_bank`
+- `MYSQL_USER=backend_user`
+- `MYSQL_PASSWORD=backend_pass`
+
+Por defecto, el backend se construye desde la carpeta hermana `../backend-bank`.
+Si tu backend esta en otra ruta, sobreescribe el contexto:
+
+```bash
+BACKEND_CONTEXT=../mi-backend docker compose up --build -d
+```
+
+Para ver logs y detener:
+
+```bash
+docker compose logs -f frontend
+docker compose down
+```
+
 ### Desarrollo local
 
 - Backend sugerido: `http://localhost:8080`
@@ -180,11 +232,7 @@ Para `GET /reportes` con `formato=pdf`:
 - Cuenta inactiva no permite movimientos.
 - En reportes: `fechaDesde <= fechaHasta`.
 
-### Escenario docker-compose (siguiente fase)
+### Notas Docker en Linux
 
-Para ejecucion conjunta `frontend + backend`, se recomienda:
-
-1. Frontend servido con Nginx (build de Angular en multi-stage).
-2. `apiBaseUrl` apuntando al servicio de backend dentro de la red de Docker.
-3. En Linux, si backend vive fuera de Docker y frontend dentro de Docker, usar `host.docker.internal` con `host-gateway`.
+- El flujo por defecto usa red interna Docker entre servicios, sin depender de `host.docker.internal`.
 

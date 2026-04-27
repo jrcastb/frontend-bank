@@ -1,0 +1,42 @@
+server {
+  listen 80;
+  server_name _;
+
+  root /usr/share/nginx/html;
+  index index.html;
+
+  # Angular routing fallback
+  location / {
+    try_files $uri $uri/ /index.html;
+  }
+
+  # SPA API prefix -> backend root
+  location /api/ {
+    proxy_pass ${BACKEND_URL}/;
+    proxy_http_version 1.1;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+  }
+
+  # Compatibility proxy when frontend requests backend endpoints without /api prefix
+  location ~ ^/(clientes|cuentas|movimientos|reportes)(/.*)?$ {
+    proxy_pass ${BACKEND_URL}$request_uri;
+    proxy_http_version 1.1;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+  }
+
+  # Convenience proxy for actuator/docs endpoints
+  location ~ ^/(actuator|v3/api-docs|swagger-ui|swagger-ui\.html) {
+    proxy_pass ${BACKEND_URL};
+    proxy_http_version 1.1;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+  }
+}
