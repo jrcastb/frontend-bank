@@ -16,7 +16,7 @@
 
   <label class="module__search">
     <span>Busqueda rapida</span>
-    <input #searchInput type="search" placeholder="CuentaId, tipo o fecha" (input)="onSearch(searchInput.value)" />
+    <input #searchInput type="search" placeholder="Numero de cuenta, tipo o fecha" (input)="onSearch(searchInput.value)" />
   </label>
 
   @if (loading()) {
@@ -32,7 +32,7 @@
       <thead>
         <tr>
           <th>Fecha</th>
-          <th>CuentaId</th>
+          <th>Numero de cuenta</th>
           <th>Tipo</th>
           <th>Valor</th>
           <th>Saldo</th>
@@ -43,7 +43,7 @@
         @for (movement of filteredMovements(); track movement.id) {
           <tr>
             <td>{{ movement.fecha | date: 'short' }}</td>
-            <td>{{ movement.cuentaId }}</td>
+            <td>{{ movement.numeroCuenta }}</td>
             <td>
               <span [class]="movement.tipoMovimiento === 'CREDIT' ? 'badge badge--credit' : 'badge badge--debit'">
                 {{ movement.tipoMovimiento }}

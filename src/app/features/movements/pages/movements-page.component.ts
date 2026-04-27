@@ -56,7 +56,7 @@ export class MovementsPageComponent {
 
     return this.movements().filter((movement) => {
       return (
-        String(movement.cuentaId).includes(query) ||
+        movement.numeroCuenta.toLowerCase().includes(query) ||
         movement.tipoMovimiento.toLowerCase().includes(query) ||
         movement.fecha.toLowerCase().includes(query)
       );

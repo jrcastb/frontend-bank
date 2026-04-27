@@ -44,7 +44,7 @@ export const CLIENT_RESPONSE_FIXTURE: ClientResponse = {
 
 export const ACCOUNT_RESPONSE_FIXTURE: AccountResponse = {
   id: 1,
-  clienteId: 10,
+  nombreCliente: 'Cliente Demo',
   numeroCuenta: '1234567890',
   tipoCuenta: 'AHORROS',
   saldoInicial: 120,
@@ -53,7 +53,7 @@ export const ACCOUNT_RESPONSE_FIXTURE: AccountResponse = {
 
 export const MOVEMENT_RESPONSE_FIXTURE: MovementResponse = {
   id: 1,
-  cuentaId: 10,
+  numeroCuenta: '1234567890',
   fecha: '2026-01-01T00:00:00Z',
   tipoMovimiento: 'CREDIT',
   valor: 50,
@@ -62,10 +62,10 @@ export const MOVEMENT_RESPONSE_FIXTURE: MovementResponse = {
 
 /** Lista mixta para probar totales de creditos/debitos */
 export const MOVEMENT_LIST_FIXTURE: MovementResponse[] = [
-  { id: 1, cuentaId: 10, fecha: '2026-01-01T00:00:00Z', tipoMovimiento: 'CREDIT', valor: 200, saldo: 320 },
-  { id: 2, cuentaId: 10, fecha: '2026-01-02T00:00:00Z', tipoMovimiento: 'CREDIT', valor: 150, saldo: 470 },
-  { id: 3, cuentaId: 10, fecha: '2026-01-03T00:00:00Z', tipoMovimiento: 'DEBIT', valor: 80, saldo: 390 },
-  { id: 4, cuentaId: 10, fecha: '2026-01-04T00:00:00Z', tipoMovimiento: 'DEBIT', valor: 120, saldo: 270 }
+  { id: 1, numeroCuenta: '1234567890', fecha: '2026-01-01T00:00:00Z', tipoMovimiento: 'CREDIT', valor: 200, saldo: 320 },
+  { id: 2, numeroCuenta: '1234567890', fecha: '2026-01-02T00:00:00Z', tipoMovimiento: 'CREDIT', valor: 150, saldo: 470 },
+  { id: 3, numeroCuenta: '1234567890', fecha: '2026-01-03T00:00:00Z', tipoMovimiento: 'DEBIT', valor: 80, saldo: 390 },
+  { id: 4, numeroCuenta: '1234567890', fecha: '2026-01-04T00:00:00Z', tipoMovimiento: 'DEBIT', valor: 120, saldo: 270 }
 ];
 
 export const REPORT_RESPONSE_FIXTURE: ReportResponse = {

@@ -2,7 +2,7 @@ export type AccountType = 'AHORROS' | 'CORRIENTE';
 
 export interface AccountResponse {
   id: number;
-  clienteId: number;
+  nombreCliente: string;
   numeroCuenta: string;
   tipoCuenta: AccountType;
   saldoInicial: number;

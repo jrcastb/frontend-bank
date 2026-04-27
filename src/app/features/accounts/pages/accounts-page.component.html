@@ -5,7 +5,7 @@
 
   <label class="module__search">
     <span>Busqueda rapida</span>
-    <input #searchInput type="search" placeholder="ClienteId, numero o tipo de cuenta" (input)="onSearch(searchInput.value)" />
+    <input #searchInput type="search" placeholder="Cliente, numero o tipo de cuenta" (input)="onSearch(searchInput.value)" />
   </label>
 
   @if (loading()) {
@@ -20,7 +20,7 @@
     <table>
       <thead>
         <tr>
-          <th>ClienteId</th>
+          <th>Cliente</th>
           <th>Numero</th>
           <th>Tipo</th>
           <th>Saldo inicial</th>
@@ -31,7 +31,7 @@
       <tbody>
         @for (account of filteredAccounts(); track account.id) {
           <tr>
-            <td>{{ account.clienteId }}</td>
+            <td>{{ account.nombreCliente }}</td>
             <td>{{ account.numeroCuenta }}</td>
             <td>{{ account.tipoCuenta }}</td>
             <td>{{ account.saldoInicial | number: '1.2-2' }}</td>

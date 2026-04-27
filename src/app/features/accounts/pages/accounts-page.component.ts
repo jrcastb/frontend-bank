@@ -63,7 +63,7 @@ export class AccountsPageComponent {
 
     return this.accounts().filter((account) => {
       return (
-        String(account.clienteId).includes(query) ||
+        account.nombreCliente.toLowerCase().includes(query) ||
         account.numeroCuenta.toLowerCase().includes(query) ||
         account.tipoCuenta.toLowerCase().includes(query)
       );
@@ -95,7 +95,7 @@ export class AccountsPageComponent {
     this.formError.set('');
     this.editingAccountId.set(account.id);
     this.form.reset({
-      clienteId: String(account.clienteId),
+      clienteId: '1',
       numeroCuenta: account.numeroCuenta,
       tipoCuenta: account.tipoCuenta,
       saldoInicial: String(account.saldoInicial),

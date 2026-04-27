@@ -86,7 +86,7 @@ describe('AccountsPageComponent', () => {
     const component = createComponent();
 
     component.openEditForm(ACCOUNT_RESPONSE_FIXTURE);
-    component.form.patchValue({ saldoInicial: '300.00' });
+    component.form.patchValue({ clienteId: '10', saldoInicial: '300.00' });
 
     component.submitForm();
 

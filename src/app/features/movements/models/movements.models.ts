@@ -2,7 +2,7 @@ export type MovementType = 'CREDIT' | 'DEBIT';
 
 export interface MovementResponse {
   id: number;
-  cuentaId: number;
+  numeroCuenta: string;
   fecha: string;
   tipoMovimiento: MovementType;
   valor: number;
